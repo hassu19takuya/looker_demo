@@ -19,17 +19,43 @@ include: "/views/*.view.lkml"                # include all views in the views/ f
 #   }
 # }
 
-explore: users {
+datagroup: default {
+  sql_trigger: select max(created_at) from order_items ;;
+  max_cache_age: "4 hours"
+}
 
+explore: users {
+  ## 演習6-1
+  persist_with: default
+
+  ## 演習4-1
   join: order_items {
     relationship: one_to_many
     sql_on: ${users.id}=${order_items.user_id} ;;
+
   }
+  ## 演習5-1,2
+  ## sql_always_where: ${order_items.status} = "Complete" AND ${order_items.returned_date} IS NULL;;
+
+  ## sql_always_having: ${order_items.count} > 5000 AND ${order_items.total_sales} > 200;;
+
+  ## 演習5-3
+  always_filter: {
+    filters: [
+      order_items.created_date: "before today"
+
+    ]
+    filters: {
+      field: order_items.created_date
+      value: "before today"
+    }
+  }
+
+  conditionally_filter: {
+    filters: [
+      order_items.created_date: "last 2 years"
+    ]
+    unless: [users.id]
+  }
+
 }
-#
-# explore: order_items_only {
-#
-#   sql_always_where: ${status} = "Complete" ;;
-#
-#   sql_always_having: ${count} > 5000 ;;
-# }
