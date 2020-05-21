@@ -90,7 +90,7 @@ view: order_items {
     type: sum
     sql: ${sale_price} ;;
 
-    filters: [users.is_email_source: "Yes"]
+    #filters: [users.is_email_source: "Yes"]
 
   }
 
@@ -143,6 +143,7 @@ view: order_items {
     type: count
     drill_fields: [detail*]
   }
+
 
   # ----- Sets of fields for drilling ------
   set: detail {

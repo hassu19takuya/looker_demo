@@ -35,9 +35,9 @@ explore: users {
 
   }
   ## 演習5-1,2
-  ## sql_always_where: ${order_items.status} = "Complete" AND ${order_items.returned_date} IS NULL;;
+  sql_always_where: ${order_items.status} = "Complete" AND ${order_items.returned_date} IS NULL;;
 
-  ## sql_always_having: ${order_items.count} > 5000 AND ${order_items.total_sales} > 200;;
+  sql_always_having: ${order_items.count} > 5000 AND ${order_items.total_sales} > 200;;
 
   ## 演習5-3
   always_filter: {
@@ -59,3 +59,43 @@ explore: users {
   }
 
 }
+
+explore: order_items {
+  fields: [ALL_FIELDS*, -order_items.unit_sale_price_per_customer, -order_items.email_sales]
+}
+
+explore: users_extends {
+  description: "User ExploreをExtendsしてAlways Whereに条件追加"
+  from: users
+  view_name: users
+  extends: [users]
+
+  ## 質問による追加
+  sql_always_where: ${users.gender} = "male" ;;
+
+  ##sql_always_having: ${order_items.count} > 5000 AND ${order_items.total_sales} > 200;;
+
+}
+
+explore: +users {
+  label: "usersだよ"
+  description: "Refinementの使用User ExploreをExtendsしてAlways Whereに条件追加"
+  from: users
+  view_name: users
+
+  ## 質問による追加
+  sql_always_where: ${users.gender} = "male" ;;
+
+  ##sql_always_having: ${order_items.count} > 5000 AND ${order_items.total_sales} > 200;;
+
+}
+
+# explore: daily_sales {
+#   view_name: order_items
+#
+#   join: inventory_items {
+#     relationship: one_to_one
+#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+#   }
+#
+# }
